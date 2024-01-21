@@ -27,59 +27,45 @@ class _HomePageState extends ConsumerState<HomePage> {
       appBar: AppBar(
         title: const Text('Home'),
       ),
-      body: Stack(
-        alignment: Alignment.center,
-        children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              IconButton(
-                onPressed: () async {
-                  try {
-                    final photo = await imagePicker.takePhoto();
-                    if (context.mounted) {
-                      await showGeneralDialog(
-                        context: context,
-                        pageBuilder: (context, animation, secondaryAnimation) {
-                          return const LinearProgressIndicator();
-                        },
-                      );
-                      // await imageUsecase.upload([photo]);
+      body: SizedBox(
+        width: double.infinity,
+        height: double.infinity,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  onPressed: () async {
+                    try {
+                      final photo = await imagePicker.takePhoto();
+                    } catch (e) {}
+                  },
+                  icon: const Icon(Icons.camera),
+                ),
+                IconButton(
+                  onPressed: () async {
+                    try {
+                      loadingNotifier.show();
+                      final photoList = await imagePicker.selectFromGallery();
+                      await imageUsecase.upload(photoList);
+                    } catch (e) {
+                    } finally {
+                      loadingNotifier.hide();
                     }
-                  } catch (e) {}
-                },
-                icon: const Icon(Icons.camera),
-              ),
-              IconButton(
-                onPressed: () async {
-                  try {
-                    loadingNotifier.show();
-                    final photoList = await imagePicker.selectFromGallery();
-                    await imageUsecase.upload(photoList);
-                  } catch (e) {
-                  } finally {
-                    loadingNotifier.hide();
-                  }
-                },
-                icon: const Icon(Icons.album),
-              ),
-            ],
-          ),
-          if (loading)
-            Center(
-              child: Container(
-                width: double.infinity,
-                height: double.infinity,
-                decoration: const BoxDecoration(
-                  color: Color.fromRGBO(0, 0, 0, 0.2),
+                  },
+                  icon: const Icon(Icons.album),
                 ),
-                child: CircularProgressIndicator(
-                  value: progress,
-                  valueColor: const AlwaysStoppedAnimation(Colors.pink),
-                ),
-              ),
+              ],
             ),
-        ],
+            if (loading)
+              CircularProgressIndicator(
+                value: progress,
+                valueColor: const AlwaysStoppedAnimation(Colors.blue),
+              ),
+          ],
+        ),
       ),
     );
   }
