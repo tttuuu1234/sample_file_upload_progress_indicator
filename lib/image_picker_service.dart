@@ -12,19 +12,21 @@ class ImagePickerService {
 
   // final ImagePicker _imagePicker;
 
-  Future<void> takePhoto() async {
+  Future<XFile?> takePhoto() async {
     try {
-      await ImagePicker().pickImage(source: ImageSource.camera);
+      return await ImagePicker().pickImage(source: ImageSource.camera);
     } on Exception catch (e) {
       log(e.toString());
+      throw Exception();
     }
   }
 
-  Future<void> selectFromGallery() async {
+  Future<List<XFile?>> selectFromGallery() async {
     try {
-      await ImagePicker().pickImage(source: ImageSource.gallery);
+      return await ImagePicker().pickMultiImage();
     } on Exception catch (e) {
       log(e.toString());
+      throw Exception();
     }
   }
 }
